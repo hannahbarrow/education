@@ -1,0 +1,238 @@
+---
+title: "Education Inequality"
+author: "Hannah Barrow"
+date: "`r Sys.Date()`"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(flexdashboard)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+```
+################################################################################
+# About
+
+## Right Column
+
+### 
+
+```{r, echo=FALSE}
+valueBox("SGD's of Interest:")
+```
+
+### 
+
+**[#4: Quality Education](https://sdgs.un.org/goals/goal4)** "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all" 
+
+**[#5: Gender Equality](https://sdgs.un.org/goals/goal5)** "Achieve gender equality and empower all women and girls"
+
+For this data story, I want to explore the differences in education quality among countries with different economic levels and practices. I also want to explore gender inequalities in education. 
+
+################################################################################
+# The Data
+
+I pulled my data sets from [Our World In Data](https://ourworldindata.org). 
+
+[Government spending on education](https://ourworldindata.org/grapher/education-spending)
+
+```{r, eval=TRUE, echo=FALSE, message=FALSE}
+library(readr)
+library(dplyr)
+
+url <- 'https://ourworldindata.org/grapher/education-spending.csv?v=1&csvType=full&useColumnShortNames=true&spending_type=gdp_share&level=all'
+
+edu_spending_origional <- read_csv(url)
+
+edu_spending <- edu_spending_origional %>% 
+  rename(spending_gdp = government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov)
+
+edu_spending %>% head
+```
+
+[Gender gap in primary, secondary and tertiary education](https://ourworldindata.org/grapher/gender-gap-education-levels)
+
+```{r, eval=TRUE, echo=FALSE, message=FALSE}
+library(readr)
+library(dplyr)
+
+url <- 'https://ourworldindata.org/grapher/gender-gap-education-levels.csv?v=1&csvType=full&useColumnShortNames=true'
+
+edu_gender_origional <- read_csv(url)
+
+edu_gender <- edu_gender_origional %>% 
+  rename(f_tertiary = f_tertiary_enrollment_rates_combined_wb,
+         m_tertiary = m_tertiary_enrollment_rates_combined_wb,
+         f_primary = f_primary_enrollment_rates_combined_wb,
+         m_primary = m_primary_enrollment_rates_combined_wb,
+         m_lower_secondary = total_net_enrolment_rate__lower_secondary__male__pct,
+         f_lower_secondary = total_net_enrolment_rate__lower_secondary__female__pct,
+         m_upper_secondary = total_net_enrolment_rate__upper_secondary__male__pct,
+         f_upper_secondary = total_net_enrolment_rate__upper_secondary__female__pct)
+
+edu_gender %>% head
+```
+
+[Inequality in education](https://ourworldindata.org/grapher/inequality-in-education)
+
+```{r, eval=TRUE, echo=FALSE, message=FALSE}
+library(readr)
+library(dplyr)
+
+url <- 'https://ourworldindata.org/grapher/inequality-in-education.csv?v=1&csvType=full&useColumnShortNames=true'
+
+edu_equality <- read_csv(url)
+
+edu_equality %>% head
+```
+
+################################################################################
+# Sources
+
+1. [Children from the poorest households benefit the least from national public education funding](https://www.unicef.org/eca/press-releases/children-poorest-households-benefit-least-national-public-education-funding-unicef)
+
+2. [Closing the Gap: Girls' Education and Women's Labor](https://blogs.worldbank.org/en/education/closing-gap-tackling-remaining-disparities-girls-education-and-womens-labor-market)
+
+3. [Investing in Quality Education for Economic Development, Peace, and Stability](https://www.csis.org/analysis/investing-quality-education-economic-development-peace-and-stability)
+
+4. [More young women than men have college degrees](https://www.pewresearch.org/short-reads/2024/11/18/us-women-are-outpacing-men-in-college-completion-including-in-every-major-racial-and-ethnic-group/)
+
+5. [New UNESCO Report shows extent of global inequalities in education and calls for greater inclusion as schools re-open](https://www.unesco.org/en/articles/new-unesco-report-shows-extent-global-inequalities-education-and-calls-greater-inclusion-schools-re)
+
+
+
+################################################################################
+################################################################################
+# Key Results
+
+## Left column
+
+### Left top row
+
+```{r}
+plot(cars)
+```
+
+### Left bottom row
+
+```{r}
+head(iris) %>% kable
+```
+
+## Right column
+
+### Top right row
+
+```{r, echo=FALSE}
+valueBox("whatever text i want!")
+```
+
+### Bottom rigth row
+
+Some **nice words** to read. 
+
+# Fancier results
+
+## Left column
+
+### Tab 1
+
+```{r}
+plot(cars)
+```
+
+> Caption would go here
+
+### Tab 2
+
+```{r}
+iris %>% kable
+```
+
+## Rigth column {data-width = 350}
+
+### Text take-away
+
+```{r, echo = FALSE}
+valueBox("33%", icon = "fa-brands fa-firefox")
+```
+
+### Really really low
+
+```{r}
+gauge(19,
+      min = 0, max = 50,
+      gaugeSectors(
+        success = c(41, 50),
+        warning = c(21, 40),
+        danger = c(0, 20)
+      ))
+```
+
+### Fourth box
+
+Even more content can go here:
+plot, table, widget, or just a narrative / explanation. 
+
+# Details {data-icon = "fa-table"}
+
+By the way, here are other [cool icons](https://fontawesome.com). 
+Some aren't free. 
+
+This tab provides wide rows rather than split-screen columns. 
+
+### Row 1
+
+```{r}
+iris %>% kable
+```
+
+### Row 2
+
+# Map
+
+```{r, echo = FALSE}
+library(leaflet)
+
+#different flavors of maps
+
+#leaflet() %>% 
+#  addTiles() %>% 
+
+#leaflet() %>% 
+#  addProviderTiles(providers$Esri.WorldImagery)
+
+#leaflet() %>% 
+#  addProviderTiles(providers$Esri.WorldTopoMap)
+
+#sewanee <- data.frame(longitude = -85.9211,
+#                      latitude = 35.2031)
+#leaflet() %>% 
+#  addTiles() %>% 
+#  addCircleMarkers(data = sewanee,
+#             color = "purple",
+#             radius = 30,
+#             popup = "Heyyyyyy!")
+
+url <- "https://docs.google.com/spreadsheets/d/18OA2UP-9oDE7hGkfEjBHhV36Z70p2pQ7I6_N-Ie8KtM/edit?usp=sharing"
+
+library(gsheet)
+locs <- gsheet2tbl(url)
+locs
+
+leaflet() %>% 
+  addTiles() %>% 
+  addCircleMarkers(data = locs,
+             color = locs$marker_color,
+             radius = locs$marker_size,
+             popup = paste0(locs$location,
+                            "<br/>",
+                            locs$description))
+```
+
