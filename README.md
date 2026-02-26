@@ -1,6 +1,6 @@
 # education
 Data Story 2: Education Inequality
 
-file:///Users/hannahbarrow/DataStory/repos/education/docs/education.html
+figure out link... 
 
 description and such... 

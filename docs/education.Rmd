@@ -15,6 +15,9 @@ library(flexdashboard)
 library(ggplot2)
 library(dplyr)
 library(knitr)
+
+library(packrat)
+library(rsconnect)
 ```
 ################################################################################
 # About
