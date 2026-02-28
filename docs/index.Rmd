@@ -64,7 +64,6 @@ edu_spending_origional <- read_csv(url)
 
 edu_spending <- edu_spending_origional %>% 
   rename(edu_spending_gdp = government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov)
-
 edu_spending #%>% kable
 ```
 
@@ -80,14 +79,13 @@ edu_gender_origional <- read_csv(url)
 
 edu_gender <- edu_gender_origional %>% 
   rename(f_tertiary = f_tertiary_enrollment_rates_combined_wb,
-         m_tertiary = m_tertiary_enrollment_rates_combined_wb,
          f_primary = f_primary_enrollment_rates_combined_wb,
+         f_lower_secondary = total_net_enrolment_rate__lower_secondary__female__pct,
+         f_upper_secondary = total_net_enrolment_rate__upper_secondary__female__pct,
+         m_tertiary = m_tertiary_enrollment_rates_combined_wb,
          m_primary = m_primary_enrollment_rates_combined_wb,
          m_lower_secondary = total_net_enrolment_rate__lower_secondary__male__pct,
-         f_lower_secondary = total_net_enrolment_rate__lower_secondary__female__pct,
-         m_upper_secondary = total_net_enrolment_rate__upper_secondary__male__pct,
-         f_upper_secondary = total_net_enrolment_rate__upper_secondary__female__pct)
-
+         m_upper_secondary = total_net_enrolment_rate__upper_secondary__male__pct)
 edu_gender #%>% kable
 ```
 
@@ -102,7 +100,6 @@ library(readr)
 url <- 'https://ourworldindata.org/grapher/inequality-in-education.csv?v=1&csvType=full&useColumnShortNames=true'
 
 edu_equality <- read_csv(url)
-
 edu_equality #%>% kable
 ```
 
@@ -118,7 +115,6 @@ gdp_origional <- read_csv(url)
 
 gdp_data <- gdp_origional %>% 
   rename(gdp_pcap = ny_gdp_pcap_pp_kd)
-
 gdp_data #%>% kable
 ```
 
@@ -136,7 +132,7 @@ library(tinytable)
 library(dplyr)
 
 gdp_table <- gdp_data %>% 
-  filter(year >= 2015 & year <= 2025) %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
   group_by(entity) %>% 
   summarize(gdp_pcap = mean(gdp_pcap)) %>% 
   #arrange(desc(gdp_pcap)) %>% 
@@ -153,7 +149,7 @@ library(tinytable)
 library(dplyr)
 
 spending_table <- edu_spending %>% 
-  filter(year >= 2015 & year <= 2025) %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
   group_by(entity) %>% 
   summarize(edu_spending_gdp = mean(edu_spending_gdp)) %>% 
   #arrange(desc(edu_spending_gdp)) %>% 
@@ -173,7 +169,7 @@ library(tinytable)
 library(dplyr)
 
 gdp_table_fc <- gdp_data %>% 
-  filter(year >= 2015 & year <= 2025) %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
   group_by(entity) %>% 
   summarize(gdp_pcap = mean(gdp_pcap)) %>% 
   arrange(desc(gdp_pcap)) %>% 
@@ -212,7 +208,7 @@ library(tinytable)
 library(dplyr)
 
 spending_table_fc <- edu_spending %>% 
-  filter(year >= 2015 & year <= 2025) %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
   group_by(entity) %>% 
   summarize(edu_spending_gdp = mean(edu_spending_gdp)) %>% 
   arrange(desc(edu_spending_gdp)) %>% 
@@ -254,7 +250,7 @@ library(tinytable)
 library(dplyr)
 
 gdp_table_fc <- gdp_data %>% 
-  filter(year >= 2015 & year <= 2025) %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
   group_by(entity) %>% 
   summarize(gdp_pcap = mean(gdp_pcap)) %>% 
   arrange(desc(gdp_pcap)) %>% 
@@ -295,7 +291,7 @@ library(tinytable)
 library(dplyr)
 
 spending_table_fc <- edu_spending %>% 
-  filter(year >= 2015 & year <= 2025) %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
   group_by(entity) %>% 
   summarize(edu_spending_gdp = mean(edu_spending_gdp)) %>% 
   arrange(desc(edu_spending_gdp)) %>% 
@@ -335,7 +331,7 @@ library(tinytable)
 library(dplyr)
 
 ineq_table_fc <- edu_equality %>% 
-  filter(year >= 2015 & year <= 2025) %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
   group_by(entity) %>% 
   summarize(ineq_edu = mean(ineq_edu)) %>% 
   arrange(desc(ineq_edu)) %>% 
@@ -368,7 +364,53 @@ ggplotly(ineq1)
 ```
 
 ################################################################################
-# new
+# Gender Edu
+
+### HELP
+
+```{r HELP, eval=TRUE, echo=FALSE, message=FALSE}
+library(ggplot2)
+library(plotly)
+library(tidyr)
+
+#edu_gender
+#edu_gender_arrange <- edu_gender %>% 
+#  mutate(levels = c("f_tertiary",
+#                    "f_primary",
+#                    "f_lower_secondary", 
+#                    "f_upper_secondary",
+#                    "m_tertiary",
+#                    "m_primary",
+#                    "m_lower_secondary", 
+#                    "m_upper_secondary"))
+#edu_gender_arrange
+#edu_gender_pivot_level <- edu_gender %>% 
+#  filter(year >= 2004 & year <= 2023) %>% 
+#  pivot_longer(cols = f_tertiary:f_upper_secondary,
+#               names_to = "level",
+#               values_to = "enrollment")
+#edu_gender_pivot_level
+#edu_gender_pivot_fm <- edu_gender_arrange
+#  pivot_longer(cols = f_lower_secondary:f_upper_secondary,
+#               names_to = "female",
+#               values_to = "f_level") %>% 
+#  pivot_longer(cols = m_lower_secondary:m_upper_secondary,
+#               names_to = "male",
+#               values_to = "m_level")
+#edu_gender_pivot_fm
+
+
+
+#ggplot(edu_gender_pivot,
+#       aes(x = year,
+#           y = enrollment,
+#           fill = level))+
+#  geom_col()
+#  theme_bw()
+
+
+```
+
 
 
 ################################################################################
