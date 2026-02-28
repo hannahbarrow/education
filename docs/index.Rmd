@@ -162,7 +162,7 @@ tt(spending_table)
 
 ## Left Column
 
-### {data-height=30}
+### {data-height=35}
 
 ```{r GDP filtered table, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -178,7 +178,7 @@ gdp_table_fc <- gdp_data %>%
 tt(gdp_table_fc)
 ```
 
-### {data-height=70}
+### {data-height=65}
 
 ```{r GDP line filtered, eval=TRUE, echo=FALSE, message=FALSE}
 library(ggplot2)
@@ -201,7 +201,7 @@ ggplotly(exp_gdp)
 
 ## Right Column
 
-### {data-height=30}
+### {data-height=35}
 
 ```{r spending filtered table, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -217,7 +217,7 @@ spending_table_fc <- edu_spending %>%
 tt(spending_table_fc)
 ```
 
-### {data-height=70}
+### {data-height=65}
 
 ```{r spending line filtered, eval=TRUE, echo=FALSE, message=FALSE}
 library(ggplot2)
@@ -243,7 +243,7 @@ ggplotly(exp_spend)
 
 ## Left Column
 
-### {data-height=30}
+### {data-height=35}
 
 ```{r GDP filtered table 2, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -259,7 +259,7 @@ gdp_table_fc <- gdp_data %>%
 tt(gdp_table_fc)
 ```
 
-### {data-height=70}
+### {data-height=65}
 
 ```{r GDP bar filtered, eval=TRUE, echo=FALSE, message=FALSE}
 library(ggplot2)
@@ -284,7 +284,7 @@ ggplotly(exp_gdp2)
 
 ## Middle Column
 
-### {data-height=30}
+### {data-height=35}
 
 ```{r spending filtered table 2, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -300,7 +300,7 @@ spending_table_fc <- edu_spending %>%
 tt(spending_table_fc)
 ```
 
-### {data-height=70}
+### {data-height=65}
 
 ```{r spending bar filtered, eval=TRUE, echo=FALSE, message=FALSE}
 edu_spending_5yrs <- edu_spending %>% 
@@ -324,7 +324,7 @@ ggplotly(exp_spend2)
 
 ## Right Column
 
-### {data-height=30}
+### {data-height=35}
 
 ```{r inequality filtered table, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -340,7 +340,7 @@ ineq_table_fc <- edu_equality %>%
 tt(ineq_table_fc)
 ```
 
-### {data-height=70}
+### {data-height=65}
 
 ```{r inequality bar filtered, eval=TRUE, echo=FALSE, message=FALSE}
 library(ggplot2)
