@@ -119,13 +119,13 @@ gdp_data #%>% kable
 ```
 
 ################################################################################
-# Exploring World GDP
+# Exploring
 
-**GDP per capita compared to countries' spending on education**
+**GDP per capita compared to spending on education**
 
 ## Left Column
 
-### Average GDP per capita over the past 10 years
+### Average GDP per capita over 10 years
 
 ```{r GDP world table, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -140,9 +140,9 @@ gdp_table <- gdp_data %>%
 tt(gdp_table)
 ```
 
-## Right Column
+## Left-mid Column
 
-### Average government expenditure on education over the past 10 years
+### Average government expenditure on education over 10 years
 
 ```{r spending world table, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -155,6 +155,125 @@ spending_table <- edu_spending %>%
   #arrange(desc(edu_spending_gdp)) %>% 
   mutate("rank" = row_number(desc(edu_spending_gdp)))
 tt(spending_table)
+```
+
+## Right-mid Column
+
+### Average gender inequality (Atkinson index) over 10 years
+
+```{r inequality world table, eval=TRUE, echo=FALSE, message=FALSE}
+library(tinytable)
+library(dplyr)
+
+ineq_table <- edu_equality %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  group_by(entity) %>% 
+  summarize(ineq_edu = mean(ineq_edu)) %>% 
+  #arrange(desc(ineq_edu)) %>% 
+  mutate("rank" = row_number(desc(ineq_edu)))
+tt(ineq_table)
+```
+
+## Right Column
+
+### Average enrollment over 10 years
+
+```{r gender edu world table, eval=TRUE, echo=FALSE, message=FALSE}
+library(tinytable)
+library(dplyr)
+library(tidyr)
+
+gender_edu_table <- edu_gender %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  group_by(entity) %>% 
+  pivot_longer(cols = f_tertiary:f_upper_secondary,
+               names_to = "level",
+               values_to = "enrollment") %>% 
+  summarize(enrollment = mean(enrollment, na.rm = TRUE)) %>% 
+  #arrange(desc(enrollment)) %>% 
+  mutate("rank" = row_number(desc(enrollment)))
+tt(gender_edu_table)
+```
+
+################################################################################
+# Focus Countries
+
+**GDP per capita compared to spending on education**
+
+## Left Column
+
+### Average GDP per capita over 10 years
+
+```{r GDP fc table, eval=TRUE, echo=FALSE, message=FALSE}
+library(tinytable)
+library(dplyr)
+
+gdp_table_fc <- gdp_data %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  group_by(entity) %>% 
+  summarize(gdp_pcap = mean(gdp_pcap)) %>% 
+  arrange(desc(gdp_pcap)) %>% 
+  mutate("rank" = row_number()) %>% 
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
+tt(gdp_table_fc)
+```
+
+## Left-mid Column
+
+### Average government expenditure on education over 10 years
+
+```{r spending fc table, eval=TRUE, echo=FALSE, message=FALSE}
+library(tinytable)
+library(dplyr)
+
+spending_table_fc <- edu_spending %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  group_by(entity) %>% 
+  summarize(edu_spending_gdp = mean(edu_spending_gdp)) %>% 
+  arrange(desc(edu_spending_gdp)) %>% 
+  mutate("rank" = row_number()) %>% 
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
+tt(spending_table_fc)
+```
+
+## Right-mid Column
+
+### Average gender inequality (Atkinson index) over 10 years
+
+```{r inequality fc table, eval=TRUE, echo=FALSE, message=FALSE}
+library(tinytable)
+library(dplyr)
+
+ineq_table_fc <- edu_equality %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  group_by(entity) %>% 
+  summarize(ineq_edu = mean(ineq_edu)) %>% 
+  arrange(desc(ineq_edu)) %>% 
+  mutate("rank" = row_number()) %>% 
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
+tt(ineq_table_fc)
+```
+
+## Right Column
+
+### Average enrollment over 10 years
+
+```{r gender edu fc table, eval=TRUE, echo=FALSE, message=FALSE}
+library(tinytable)
+library(dplyr)
+library(tidyr)
+
+gender_edu_fc <- edu_gender %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  group_by(entity) %>% 
+  pivot_longer(cols = f_tertiary:f_upper_secondary,
+               names_to = "level",
+               values_to = "enrollment") %>% 
+  summarize(enrollment = mean(enrollment, na.rm = TRUE)) %>% 
+  arrange(desc(enrollment)) %>% 
+  mutate("rank" = row_number()) %>% 
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
+tt(gender_edu_fc)
 ```
 
 ################################################################################
@@ -174,7 +293,7 @@ gdp_table_fc <- gdp_data %>%
   summarize(gdp_pcap = mean(gdp_pcap)) %>% 
   arrange(desc(gdp_pcap)) %>% 
   mutate("rank" = row_number()) %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 tt(gdp_table_fc)
 ```
 
@@ -185,7 +304,7 @@ library(ggplot2)
 library(plotly)
 
 gdp_data_fc <- gdp_data %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 
 exp_gdp <- ggplot(gdp_data_fc,
                   aes(x = year,
@@ -193,7 +312,7 @@ exp_gdp <- ggplot(gdp_data_fc,
                       color = entity))+
   geom_line()+
   theme_bw()+
-  labs(title = "Average GDP per capita in 8 countries over the past 10 years",
+  labs(title = "Average GDP per capita over the past 10 years",
        x = "Country",
        y = "GDP per capita")
 ggplotly(exp_gdp)
@@ -213,7 +332,7 @@ spending_table_fc <- edu_spending %>%
   summarize(edu_spending_gdp = mean(edu_spending_gdp)) %>% 
   arrange(desc(edu_spending_gdp)) %>% 
   mutate("rank" = row_number()) %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 tt(spending_table_fc)
 ```
 
@@ -224,7 +343,7 @@ library(ggplot2)
 library(plotly)
 
 edu_spending_fc <- edu_spending %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 
 exp_spend <- ggplot(edu_spending_fc,
                     aes(x = year,
@@ -232,7 +351,7 @@ exp_spend <- ggplot(edu_spending_fc,
                         color = entity))+
   geom_line()+
   theme_bw()+
-  labs(title = "Average government expenditure on education in 8 countries over the past 10 years",
+  labs(title = "Average government expenditure on education over the past 10 years",
        x = "Country",
        y = "% of GDP for education")
 ggplotly(exp_spend)
@@ -255,7 +374,7 @@ gdp_table_fc <- gdp_data %>%
   summarize(gdp_pcap = mean(gdp_pcap)) %>% 
   arrange(desc(gdp_pcap)) %>% 
   mutate("rank" = row_number()) %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 tt(gdp_table_fc)
 ```
 
@@ -267,7 +386,7 @@ library(plotly)
 
 gdp_data_2023 <- gdp_data %>% 
   filter(year == 2023) %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 
 exp_gdp2 <- ggplot(gdp_data_2023, 
                    aes(x = entity,
@@ -276,50 +395,10 @@ exp_gdp2 <- ggplot(gdp_data_2023,
   geom_col()+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 30, hjust = 1))+
-  labs(title = "GDP in 8 countries in 2023",
+  labs(title = "GDP in 2023",
        x = "Country",
        y = "GDP per capita")
 ggplotly(exp_gdp2)
-```
-
-## Middle Column
-
-### {data-height=35}
-
-```{r spending filtered table 2, eval=TRUE, echo=FALSE, message=FALSE}
-library(tinytable)
-library(dplyr)
-
-spending_table_fc <- edu_spending %>% 
-  filter(year >= 2014 & year <= 2023) %>% 
-  group_by(entity) %>% 
-  summarize(edu_spending_gdp = mean(edu_spending_gdp)) %>% 
-  arrange(desc(edu_spending_gdp)) %>% 
-  mutate("rank" = row_number()) %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
-tt(spending_table_fc)
-```
-
-### {data-height=65}
-
-```{r spending bar filtered, eval=TRUE, echo=FALSE, message=FALSE}
-edu_spending_5yrs <- edu_spending %>% 
-  filter(year >= 2019 & year <= 2023) %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
-  #mutate("mean_edu_spending_gdp" = mean(edu_spending_gdp))
-#edu_spending_5yrs
-
-exp_spend2 <- ggplot(edu_spending_5yrs,
-                    aes(x = entity,
-                        y = edu_spending_gdp,
-                        fill = entity))+
-  geom_col()+
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
-  labs(title = "Cumulative? (i want average) government expenditure on education in 8 countries over the most recent 5 years",
-       x = "Country",
-       y = "% of GDP for education")
-ggplotly(exp_spend2)
 ```
 
 ## Right Column
@@ -336,7 +415,7 @@ ineq_table_fc <- edu_equality %>%
   summarize(ineq_edu = mean(ineq_edu)) %>% 
   arrange(desc(ineq_edu)) %>% 
   mutate("rank" = row_number()) %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 tt(ineq_table_fc)
 ```
 
@@ -348,7 +427,7 @@ library(plotly)
 
 edu_equality_fc <- edu_equality %>% 
   filter(year == 2023) %>% 
-  filter(entity %in% c("Burundi","Costa Rica","Iceland","Luxembourg","Slovakia","Somalia","Tuvalu","United States"))
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 
 ineq1 <- ggplot(edu_equality_fc,
                 aes(x = entity,
@@ -357,7 +436,7 @@ ineq1 <- ggplot(edu_equality_fc,
   geom_col()+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 30, hjust = 1))+
-  labs(title = "Education inequality in 8 countries in 2023",
+  labs(title = "Education inequality in 2023",
        x = "Country",
        y = "Inequality (measured with Atkinson index)")
 ggplotly(ineq1)
@@ -366,52 +445,65 @@ ggplotly(ineq1)
 ################################################################################
 # Gender Edu
 
-### HELP
+## Right Column
 
-```{r HELP, eval=TRUE, echo=FALSE, message=FALSE}
+### 
+
+```{r gender edu FEMALE, eval=TRUE, echo=FALSE, message=FALSE}
 library(ggplot2)
 library(plotly)
 library(tidyr)
 
-#edu_gender
-#edu_gender_arrange <- edu_gender %>% 
-#  mutate(levels = c("f_tertiary",
-#                    "f_primary",
-#                    "f_lower_secondary", 
-#                    "f_upper_secondary",
-#                    "m_tertiary",
-#                    "m_primary",
-#                    "m_lower_secondary", 
-#                    "m_upper_secondary"))
-#edu_gender_arrange
-#edu_gender_pivot_level <- edu_gender %>% 
-#  filter(year >= 2004 & year <= 2023) %>% 
-#  pivot_longer(cols = f_tertiary:f_upper_secondary,
-#               names_to = "level",
-#               values_to = "enrollment")
-#edu_gender_pivot_level
-#edu_gender_pivot_fm <- edu_gender_arrange
-#  pivot_longer(cols = f_lower_secondary:f_upper_secondary,
-#               names_to = "female",
-#               values_to = "f_level") %>% 
-#  pivot_longer(cols = m_lower_secondary:m_upper_secondary,
-#               names_to = "male",
-#               values_to = "m_level")
-#edu_gender_pivot_fm
+gender_edu_fem <- edu_gender %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo")) %>% 
+   pivot_longer(cols = contains("f_"),
+               names_to = "female",
+               values_to = "f_enrollment") %>% 
+   pivot_longer(cols = contains("m_"),
+               names_to = "male",
+               values_to = "m_enrollment")
 
-
-
-#ggplot(edu_gender_pivot,
-#       aes(x = year,
-#           y = enrollment,
-#           fill = level))+
-#  geom_col()
-#  theme_bw()
-
-
+fem_col <- ggplot(gender_edu_fem,
+       aes(x = year,
+           y = f_enrollment,
+           fill = entity))+
+  geom_col()+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  labs(title = "Female enrollment")
+ggplotly(fem_col)
 ```
 
+## Left Column
 
+### 
+
+```{r gender edu MALE, eval=TRUE, echo=FALSE, message=FALSE}
+library(ggplot2)
+library(plotly)
+library(tidyr)
+
+gender_edu_fem <- edu_gender %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo")) %>% 
+   pivot_longer(cols = contains("f_"),
+               names_to = "female",
+               values_to = "f_enrollment") %>% 
+   pivot_longer(cols = contains("m_"),
+               names_to = "male",
+               values_to = "m_enrollment")
+
+mal_col <- ggplot(gender_edu_fem,
+       aes(x = year,
+           y = m_enrollment,
+           fill = entity))+
+  geom_col()+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  labs(title = "Male enrollment")
+ggplotly(mal_col)
+```
 
 ################################################################################
 # Map
