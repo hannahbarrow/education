@@ -43,7 +43,7 @@ valueBox("SGD's of Interest:")
 
 &nbsp; 
 
-For this data story, I want to explore the differences in education quality and access among countries with different economic levels and practices. To do this, I focused on 8 countries and compared their expenditure on education and inequality. The 9 countries I focused on are Luxembourg, the US, Greece, Czechia, the Democratic Republic of Congo, Guinea, Tuvalu, Somalia, and Burundi (see [map](#map)). I also want to explore gender inequalities in education by looking at how the enrollment of men and women into schools differs and has changed over time. 
+For this data story, I want to explore the differences in education quality and access among countries with different economic levels and practices. To do this, I focused on 9 countries and compared their expenditure on education and inequality. The 9 countries I focused on are Luxembourg, the US, Greece, Czechia, the Democratic Republic of Congo, Guinea, Tuvalu, Somalia, and Burundi (see [map](#map)). I also want to explore gender inequalities in education by looking at how the enrollment of men and women into schools differs and has changed over time. 
 
 ################################################################################
 # The Data
@@ -64,7 +64,7 @@ edu_spending_origional <- read_csv(url)
 
 edu_spending <- edu_spending_origional %>% 
   rename(edu_spending_gdp = government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov)
-edu_spending %>% kable
+edu_spending #%>% kable
 ```
 
 ### [Gender gap in primary, secondary and tertiary education](https://ourworldindata.org/grapher/gender-gap-education-levels)
@@ -86,7 +86,7 @@ edu_gender <- edu_gender_origional %>%
          m_primary = m_primary_enrollment_rates_combined_wb,
          m_lower_secondary = total_net_enrolment_rate__lower_secondary__male__pct,
          m_upper_secondary = total_net_enrolment_rate__upper_secondary__male__pct)
-edu_gender %>% kable
+edu_gender #%>% kable
 ```
 
 ## Right Column
@@ -100,7 +100,7 @@ library(readr)
 url <- 'https://ourworldindata.org/grapher/inequality-in-education.csv?v=1&csvType=full&useColumnShortNames=true'
 
 edu_equality <- read_csv(url)
-edu_equality %>% kable
+edu_equality #%>% kable
 ```
 
 ### [GDP per capita](https://ourworldindata.org/grapher/gdp-per-capita-worldbank?time=2015..latest)
@@ -115,7 +115,7 @@ gdp_origional <- read_csv(url)
 
 gdp_data <- gdp_origional %>% 
   rename(gdp_pcap = ny_gdp_pcap_pp_kd)
-gdp_data %>% kable
+gdp_data #%>% kable
 ```
 
 ################################################################################
