@@ -1,7 +1,9 @@
 Data Story 2: 
 
 Education Inequality: Does having more money mean that you are spending more money on education?
+
 by Hannah Barrow
+
 2026-03-03
 
 This data story focuses on Sustainable Development Goals 4 (quality education) 
