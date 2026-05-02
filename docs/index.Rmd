@@ -66,7 +66,7 @@ edu_spending_origional <- read_csv(url)
 edu_spending <- edu_spending_origional %>% 
   rename(edu_spending_gdp = combined_expenditure_share_gdp) %>% 
   select(-2)
-tt(edu_spending)
+tt(edu_spending %>% filter(entity %in% c("United States")), width = 0.9)
 ```
 
 ### [Gender gap in primary, secondary and tertiary education](https://ourworldindata.org/grapher/gender-gap-education-levels): this dataset includes data on the enrollment divide between female and male students in different levels of education. Values including "f" are regarding the enrollment of female students and "m" are regarding the enrollment of male students, with the respective "_level-of-education" in which they are enrolled.
@@ -89,7 +89,7 @@ edu_gender <- edu_gender_origional %>%
          m_lower_secondary = total_net_enrolment_rate__lower_secondary__male__pct,
          m_upper_secondary = total_net_enrolment_rate__upper_secondary__male__pct) %>% 
   select(-2)
-tt(edu_gender)
+tt(edu_gender %>% filter(entity %in% c("United States")))
 ```
 
 ## Right Column
@@ -106,7 +106,7 @@ edu_equality_origional <- read_csv(url)
 
 edu_equality <- edu_equality_origional %>% 
   select(-2, -5)
-tt(edu_equality)
+tt(edu_equality %>% filter(entity %in% c("United States")), width = 0.9)
 ```
 
 ### [GDP per capita](https://ourworldindata.org/grapher/gdp-per-capita-worldbank?time=2015..latest): this dataset includes GDP data for all countries.
@@ -122,7 +122,7 @@ gdp_origional <- read_csv(url)
 gdp_data <- gdp_origional %>% 
   rename(gdp_pcap = ny_gdp_pcap_pp_kd) %>% 
   select(-2, -5)
-tt(gdp_data)
+tt(gdp_data %>% filter(entity %in% c("United States")), width = 0.9)
 ```
 
 ################################################################################
