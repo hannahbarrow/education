@@ -10,29 +10,34 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(flexdashboard)
 library(ggplot2)
 library(dplyr)
 library(knitr)
+library(tinytable)
 ```
 
 ################################################################################
 # About
 
-## Left Column
+## Main Column
 
-### 
+### {data-height="30%"}
 
 ```{r, echo=FALSE}
 valueBox("SGD's of Interest:")
 ```
 
-### 
+### {data-height="70%"}
 
 **[#4: Quality Education](https://sdgs.un.org/goals/goal4)** "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all" 
 
 **[#5: Gender Equality](https://sdgs.un.org/goals/goal5)** "Achieve gender equality and empower all women and girls"
+
+###
+
+For this data story, I want to explore the differences in education quality and access among countries with different economic levels and practices. To do this, I focused on 9 countries and compared their expenditure on education and inequality. The 9 countries I focused on are Luxembourg, the US, Greece, Czechia, the Democratic Republic of Congo, Guinea, Tuvalu, Somalia, and Burundi (see [map](#map)). I also want to explore gender inequalities in education by looking at how the enrollment of men and women into schools differs and has changed over time. 
 
 &nbsp; 
 
@@ -41,18 +46,14 @@ valueBox("SGD's of Interest:")
 ![](../../images/SDG4.png){width="30%"}
 ![](../../images/SDG5.png){width="30%"}
 
-&nbsp; 
-
-For this data story, I want to explore the differences in education quality and access among countries with different economic levels and practices. To do this, I focused on 9 countries and compared their expenditure on education and inequality. The 9 countries I focused on are Luxembourg, the US, Greece, Czechia, the Democratic Republic of Congo, Guinea, Tuvalu, Somalia, and Burundi (see [map](#map)). I also want to explore gender inequalities in education by looking at how the enrollment of men and women into schools differs and has changed over time. 
-
 ################################################################################
 # The Data
 
-All datasets came from [Our World In Data](https://ourworldindata.org). 
+All datasets came from [Our World In Data](https://ourworldindata.org), an organization that provides data and information on global issues such as poverty, hunger, climate change, inequality, etc. 
 
 ## Left Column
 
-### [Government spending on education](https://ourworldindata.org/grapher/education-spending)
+### [Government spending on education](https://ourworldindata.org/grapher/education-spending): this dataset includes data on government spending on all levels of education. "edu_spending_gdp" is the total annual expenditure as a percentage of the countries GDP.
 
 ```{r dataset1, eval=TRUE, echo=FALSE, message=FALSE}
 library(dplyr)
@@ -63,11 +64,12 @@ url <- 'https://ourworldindata.org/grapher/education-spending.csv?v=1&csvType=fu
 edu_spending_origional <- read_csv(url)
 
 edu_spending <- edu_spending_origional %>% 
-  rename(edu_spending_gdp = government_expenditure_on_education_as_a_percentage_of_gdp__pct__xgdp_fsgov)
-edu_spending #%>% kable
+  rename(edu_spending_gdp = combined_expenditure_share_gdp) %>% 
+  select(-2)
+#tt(edu_spending)
 ```
 
-### [Gender gap in primary, secondary and tertiary education](https://ourworldindata.org/grapher/gender-gap-education-levels)
+### [Gender gap in primary, secondary and tertiary education](https://ourworldindata.org/grapher/gender-gap-education-levels): this dataset includes data on the enrollment divide between female and male students in different levels of education. Values including "f" are regarding the enrollment of female students and "m" are regarding the enrollment of male students, with the respective "_level-of-education" in which they are enrolled.
 
 ```{r dataset2, eval=TRUE, echo=FALSE, message=FALSE}
 library(dplyr)
@@ -85,13 +87,14 @@ edu_gender <- edu_gender_origional %>%
          m_tertiary = m_tertiary_enrollment_rates_combined_wb,
          m_primary = m_primary_enrollment_rates_combined_wb,
          m_lower_secondary = total_net_enrolment_rate__lower_secondary__male__pct,
-         m_upper_secondary = total_net_enrolment_rate__upper_secondary__male__pct)
-edu_gender #%>% kable
+         m_upper_secondary = total_net_enrolment_rate__upper_secondary__male__pct) %>% 
+  select(-2)
+#tt(edu_gender)
 ```
 
 ## Right Column
 
-### [Inequality in education](https://ourworldindata.org/grapher/inequality-in-education)
+### [Inequality in education](https://ourworldindata.org/grapher/inequality-in-education): this dataset includes data on the inequelity of education, measured with the *Atkinson index*. "ineq_edu" is this value on a scale from 0 to 1, with higher values indicating higher inequality.
 
 ```{r dataset3, eval=TRUE, echo=FALSE, message=FALSE}
 library(dplyr)
@@ -99,11 +102,14 @@ library(readr)
 
 url <- 'https://ourworldindata.org/grapher/inequality-in-education.csv?v=1&csvType=full&useColumnShortNames=true'
 
-edu_equality <- read_csv(url)
-edu_equality #%>% kable
+edu_equality_origional <- read_csv(url)
+
+edu_equality <- edu_equality_origional %>% 
+  select(-2, -5)
+#tt(edu_equality)
 ```
 
-### [GDP per capita](https://ourworldindata.org/grapher/gdp-per-capita-worldbank?time=2015..latest)
+### [GDP per capita](https://ourworldindata.org/grapher/gdp-per-capita-worldbank?time=2015..latest): this dataset includes GDP data for all countries.
 
 ```{r gdp data, eval=TRUE, echo=FALSE, message=FALSE}
 library(dplyr)
@@ -114,111 +120,17 @@ url <- 'https://ourworldindata.org/grapher/gdp-per-capita-worldbank.csv?v=1&csvT
 gdp_origional <- read_csv(url)
 
 gdp_data <- gdp_origional %>% 
-  rename(gdp_pcap = ny_gdp_pcap_pp_kd)
-gdp_data #%>% kable
-```
-
-################################################################################
-# Exploring
-
-**GDP per capita compared to spending on education**
-
-## Left Column
-
-### Average GDP per capita over 10 years
-
-```{r GDP world table, eval=TRUE, echo=FALSE, message=FALSE}
-library(tinytable)
-library(dplyr)
-
-gdp_table <- gdp_data %>% 
-  filter(year >= 2014 & year <= 2023) %>% 
-  group_by(entity) %>% 
-  summarize(gdp_pcap = mean(gdp_pcap)) %>% 
-  #arrange(desc(gdp_pcap)) %>% 
-  mutate("rank" = row_number(desc(gdp_pcap)))
-tt(gdp_table)
-```
-
-## Left-mid Column
-
-### Average government expenditure on education over 10 years
-
-```{r spending world table, eval=TRUE, echo=FALSE, message=FALSE}
-library(tinytable)
-library(dplyr)
-
-spending_table <- edu_spending %>% 
-  filter(year >= 2014 & year <= 2023) %>% 
-  group_by(entity) %>% 
-  summarize(edu_spending_gdp = mean(edu_spending_gdp)) %>% 
-  #arrange(desc(edu_spending_gdp)) %>% 
-  mutate("rank" = row_number(desc(edu_spending_gdp)))
-tt(spending_table)
-```
-
-## Right-mid Column
-
-### Average gender inequality (Atkinson index) over 10 years
-
-```{r inequality world table, eval=TRUE, echo=FALSE, message=FALSE}
-library(tinytable)
-library(dplyr)
-
-ineq_table <- edu_equality %>% 
-  filter(year >= 2014 & year <= 2023) %>% 
-  group_by(entity) %>% 
-  summarize(ineq_edu = mean(ineq_edu)) %>% 
-  #arrange(desc(ineq_edu)) %>% 
-  mutate("rank" = row_number(desc(ineq_edu)))
-tt(ineq_table)
-```
-
-## Right Column
-
-### Average enrollment over 10 years
-
-```{r gender edu world table, eval=TRUE, echo=FALSE, message=FALSE}
-library(tinytable)
-library(dplyr)
-library(tidyr)
-
-gender_edu_table <- edu_gender %>% 
-  filter(year >= 2014 & year <= 2023) %>% 
-  group_by(entity) %>% 
-  pivot_longer(cols = f_tertiary:f_upper_secondary,
-               names_to = "level",
-               values_to = "enrollment") %>% 
-  summarize(enrollment = mean(enrollment, na.rm = TRUE)) %>% 
-  #arrange(desc(enrollment)) %>% 
-  mutate("rank" = row_number(desc(enrollment)))
-tt(gender_edu_table)
+  rename(gdp_pcap = ny_gdp_pcap_pp_kd) %>% 
+  select(-2, -5)
+#tt(gdp_data)
 ```
 
 ################################################################################
 # Focus Countries
 
-**GDP per capita compared to spending on education**
+I decided to focus only on a select amount of countries to reduce clutter in my displays of the data. I chose based on the ranking of every country in different categories. Tuvalu and Somalia have the highest and lowest spending on education per GDP Greece and the Democratic Republic of Congo have the highest and lowest enrollment Guinea and Czechia have the highest and lowest education inequality. And Luxembourg and Burundi have the highest and lowest GDPs. I also included the US to see where we compare as well. 
 
-## Left Column
-
-### Average GDP per capita over 10 years
-
-```{r GDP fc table, eval=TRUE, echo=FALSE, message=FALSE}
-library(tinytable)
-library(dplyr)
-
-gdp_table_fc <- gdp_data %>% 
-  filter(year >= 2014 & year <= 2023) %>% 
-  group_by(entity) %>% 
-  summarize(gdp_pcap = mean(gdp_pcap)) %>% 
-  arrange(desc(gdp_pcap)) %>% 
-  mutate("rank" = row_number()) %>% 
-  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
-tt(gdp_table_fc)
-```
-
-## Left-mid Column
+## Left Column {data-width=25}
 
 ### Average government expenditure on education over 10 years
 
@@ -235,26 +147,6 @@ spending_table_fc <- edu_spending %>%
   filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
 tt(spending_table_fc)
 ```
-
-## Right-mid Column
-
-### Average gender inequality (Atkinson index) over 10 years
-
-```{r inequality fc table, eval=TRUE, echo=FALSE, message=FALSE}
-library(tinytable)
-library(dplyr)
-
-ineq_table_fc <- edu_equality %>% 
-  filter(year >= 2014 & year <= 2023) %>% 
-  group_by(entity) %>% 
-  summarize(ineq_edu = mean(ineq_edu)) %>% 
-  arrange(desc(ineq_edu)) %>% 
-  mutate("rank" = row_number()) %>% 
-  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
-tt(ineq_table_fc)
-```
-
-## Right Column
 
 ### Average enrollment over 10 years
 
@@ -276,12 +168,69 @@ gender_edu_fc <- edu_gender %>%
 tt(gender_edu_fc)
 ```
 
+## Right Column {data-width=25}
+
+### Average gender inequality (Atkinson index) over 10 years
+
+```{r inequality fc table, eval=TRUE, echo=FALSE, message=FALSE}
+library(tinytable)
+library(dplyr)
+
+ineq_table_fc <- edu_equality %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  group_by(entity) %>% 
+  summarize(ineq_edu = mean(ineq_edu)) %>% 
+  arrange(desc(ineq_edu)) %>% 
+  mutate("rank" = row_number()) %>% 
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
+tt(ineq_table_fc)
+```
+
+### Average GDP per capita over 10 years
+
+```{r GDP fc table, eval=TRUE, echo=FALSE, message=FALSE}
+library(tinytable)
+library(dplyr)
+
+gdp_table_fc <- gdp_data %>% 
+  filter(year >= 2014 & year <= 2023) %>% 
+  group_by(entity) %>% 
+  summarize(gdp_pcap = mean(gdp_pcap)) %>% 
+  arrange(desc(gdp_pcap)) %>% 
+  mutate("rank" = row_number()) %>% 
+  filter(entity %in% c("Burundi","Czechia","Greece","Luxembourg","Guinea","Somalia","Tuvalu","United States","Democratic Republic of Congo"))
+tt(gdp_table_fc)
+```
+
+--------------------------------------------------------------------------------
+## Map Column {data-width=50}
+
+### (I could only get the pink color to work)
+
+```{r map, eval=TRUE, echo=FALSE, message=FALSE}
+library(leaflet)
+url <- "https://docs.google.com/spreadsheets/d/1UsY0t3M9jtPlI31Ny8tAQ7gEVrM7Us4iToOzY9rgUX0/edit?usp=sharing"
+
+library(gsheet)
+locs <- gsheet2tbl(url)
+locs
+
+leaflet() %>% 
+  addTiles() %>% 
+  addCircleMarkers(data = locs,
+             color = locs$marker_color,
+             radius = locs$marker_size,
+             popup = paste0(locs$location))
+```
+
 ################################################################################
 # Spending
 
+As a reminder, “edu_spending_gdp” is the amount of money going towards education per amount of people in the country. And here, you can see that it is not the countries with the highest GDPs (aka. money per people in the country) putting their money towards educating those people. It is a little bit hard to see becasue some countries have more sparse data than others on spending, but Tuvalu ranks 174/212 in GDP but still allocated the highest amount of their GDP to education out of 193 countries for which there is data. 
+
 ## Left Column
 
-### {data-height=35}
+### Average GDP per capita over the past 10 years {data-height=35}
 
 ```{r GDP filtered table, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -314,13 +263,14 @@ exp_gdp <- ggplot(gdp_data_fc,
   theme_bw()+
   labs(title = "Average GDP per capita over the past 10 years",
        x = "Country",
-       y = "GDP per capita")
+       y = "GDP per capita")+
+  theme(legend.position = "none")
 ggplotly(exp_gdp)
 ```
 
 ## Right Column
 
-### {data-height=35}
+### Average government expenditure on education over the past 10 years {data-height=35}
 
 ```{r spending filtered table, eval=TRUE, echo=FALSE, message=FALSE}
 library(tinytable)
@@ -353,12 +303,15 @@ exp_spend <- ggplot(edu_spending_fc,
   theme_bw()+
   labs(title = "Average government expenditure on education over the past 10 years",
        x = "Country",
-       y = "% of GDP for education")
+       y = "% of GDP for education")+
+  theme(legend.position = "none")
 ggplotly(exp_spend)
 ```
 
 ################################################################################
 # Inequality
+
+Here, you can see how the relationship between GDP and inequality are mostly inverse among all countries included. The Atkinson index typically takes into account income, wealth, or possibly life expectancy when measuring inequality. So it is no surprise that the countries with fewer financial means are facing more inequality and challenges in education. 
 
 ## Left Column
 
@@ -394,10 +347,11 @@ exp_gdp2 <- ggplot(gdp_data_2023,
                        fill = entity))+
   geom_col()+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  theme(axis.text.x = element_text(angle = 20, hjust = 1))+
   labs(title = "GDP in 2023",
        x = "Country",
-       y = "GDP per capita")
+       y = "GDP per capita")+
+  theme(legend.position = "none")
 ggplotly(exp_gdp2)
 ```
 
@@ -435,15 +389,18 @@ ineq1 <- ggplot(edu_equality_fc,
                     fill = entity))+
   geom_col()+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))+
+  theme(axis.text.x = element_text(angle = 20, hjust = 1))+
   labs(title = "Education inequality in 2023",
        x = "Country",
-       y = "Inequality (measured with Atkinson index)")
+       y = "Inequality (measured with Atkinson index)")+
+  theme(legend.position = "none")
 ggplotly(ineq1)
 ```
 
 ################################################################################
 # Gender Edu
+
+Finally, I was exploring the differences in enrollment between girls and boys. I was having a hard time figuring out how to display the data in this dataset. Because there is discrepancy in the enrollment among girls and boys. Male enrollments in higher in all levels of education except for tertiary since the year 2000...
 
 ## Right Column
 
@@ -503,27 +460,6 @@ mal_col <- ggplot(gender_edu_fem,
   theme(axis.text.x = element_text(angle = 30, hjust = 1))+
   labs(title = "Male enrollment")
 ggplotly(mal_col)
-```
-
-################################################################################
-# Map
-
-```{r map, eval=TRUE, echo=FALSE, message=FALSE}
-library(leaflet)
-url <- "https://docs.google.com/spreadsheets/d/1UsY0t3M9jtPlI31Ny8tAQ7gEVrM7Us4iToOzY9rgUX0/edit?usp=sharing"
-
-library(gsheet)
-locs <- gsheet2tbl(url)
-locs
-
-leaflet() %>% 
-  addTiles() %>% 
-  addCircleMarkers(data = locs,
-             color = locs$marker_color,
-             radius = locs$marker_size,
-             popup = paste0(locs$location,
-                            "<br/>",
-                            locs$description))
 ```
 
 ################################################################################
